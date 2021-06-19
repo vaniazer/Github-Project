@@ -13,9 +13,6 @@ import com.example.github_projek.database.AkunDatabase;
 import com.example.github_projek.model.db.Akun;
 
 public class DaftarActivity extends AppCompatActivity {
-    public static final int REQUEST_ADD = 100;
-    public static final int RESULT_ADD = 110;
-    public static final String EXTRA_ADD = "extra_add";
 
     private EditText daftar_username, daftar_nama, daftar_password, daftar_telepon;
     private Button kembali, daftar;
@@ -27,10 +24,6 @@ public class DaftarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daftar);
 
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setTitle("Daftar");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
         akunDao = AkunDatabase.getInstance(this).akunDao();
 
         daftar_username = findViewById(R.id.daftar_username);

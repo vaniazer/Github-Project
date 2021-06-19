@@ -20,7 +20,7 @@ public class NavbarActivity extends AppCompatActivity implements BottomNavigatio
         BottomNavigationView navigasi = findViewById(R.id.bottom_nav);
         navigasi.setOnNavigationItemSelectedListener(this);
 
-        prosesFragment(new FragmentHomeActivity());
+        prosesFragment(new HomeFragment());
     }
 
 
@@ -29,7 +29,7 @@ public class NavbarActivity extends AppCompatActivity implements BottomNavigatio
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_home:
-                prosesFragment(new FragmentHomeActivity());
+                prosesFragment(new HomeFragment());
                 break;
 
             case R.id.menu_profil:
@@ -53,4 +53,5 @@ public class NavbarActivity extends AppCompatActivity implements BottomNavigatio
             return false;
         }
     }
+
 }

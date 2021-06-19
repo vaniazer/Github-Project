@@ -19,15 +19,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
-    private static final String SHARED_PREF_NAME = "my_pref";
-    private static final String KEY_USERNAME = "username";
+    private static final String KEY_USERNAME = "USERNAME";
 
     EditText user, pass;
     Button login, register;
-    AkunDao akunDao;
 
-    String dbUsername = "firstInitial", dbEmail = "firstInitial", dbPassword = "firstInitial";
-    String sUsername = "", sPassword = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +34,6 @@ public class MainActivity extends AppCompatActivity {
         pass = findViewById(R.id.password);
         login = findViewById(R.id.btn_login);
         register = findViewById(R.id.btn_register);
-
-        sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-
-        String sharedUsername = sharedPreferences.getString(KEY_USERNAME,null);
-
-        if (sharedUsername != null){
-            Intent intent = new Intent(getApplicationContext(), NavbarActivity.class);
-            startActivity(intent);
-            finish();
-        }
-
-        akunDao = AkunDatabase.getInstance(this).akunDao();
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,51 +51,31 @@ public class MainActivity extends AppCompatActivity {
 
 
                 // Check if username, password is filled
-                if(username.trim().length() > 0 && password.trim().length() > 0){
-                    checkUser();
-                    if(username.equals(sUsername) && password.equals(sPassword)) {
-                        //Diatur bahwa passwordnya admin
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(KEY_USERNAME, user.getText().toString());
-                        editor.apply();
 
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        Toast.makeText(getApplicationContext(),"Selamat Datang " + username, Toast.LENGTH_LONG).show();
-                        startActivity(intent);
-                        finish();
-
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(),"Tidak Berhasil Login", Toast.LENGTH_LONG).show();
-                    }
-                }else if(username.trim().length() == 0 ){
+                if(username.trim().length() == 0 || password.trim().length() == 0 ){
                     //JIka Username Kosong
                     Toast.makeText(getApplicationContext(),"Tidak Berhasil Login", Toast.LENGTH_LONG).show();
-                }
-                else if(password.trim().length() == 0 ){
-                    //Jika Password Kosong
-                    Toast.makeText(getApplicationContext(),"Tidak Berhasil Login", Toast.LENGTH_LONG).show();
-                }
-            }
+                }else{
+                    AkunDatabase akunDatabase = AkunDatabase.getInstance(getApplicationContext());
+                    AkunDao akunDao = akunDatabase.akunDao();
 
-            private void checkUser() {
-                dbUsername = "";
-                dbEmail = "";
-                dbPassword = "";
+                    Akun akun = akunDao.login(username,password);
+                    if (akun == null){
+                        Toast.makeText(getApplicationContext(), "Akun Tidak Ada", Toast.LENGTH_SHORT).show();
+                    }else{
+                        sharedPreferences = getSharedPreferences("MY_PREF", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("LOGGED",true);
+                        editor.putString(KEY_USERNAME,username);
+                        editor.apply();
 
-                sUsername = user.getText().toString();
-                sPassword = pass.getText().toString();
-
-                List<Akun> akuns = akunDao.getAllData();
-                for (Akun data : akuns ){
-                    System.out.println("Output");
-                    if((data.getUsername().equals(sUsername) || dbPassword.equals(sPassword))){
-                        System.out.println("Masuk");
-                        dbUsername = data.getUsername();
-                        dbPassword = data.getPassword();
-                        break;
+                        Intent intent = new Intent(getApplicationContext(), NavbarActivity.class);
+                        Toast.makeText(getApplicationContext(),"Selamat Datang " + username, Toast.LENGTH_LONG).show();
+                        MainActivity.this.startActivity(intent);
+                        finish();
                     }
                 }
+
             }
         });
 
