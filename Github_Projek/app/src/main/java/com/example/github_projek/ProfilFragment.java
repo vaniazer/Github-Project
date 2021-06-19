@@ -89,13 +89,11 @@ public class ProfilFragment extends Fragment{
             public void onClick(View view) {
                 Toast.makeText(getContext(),"Selamat Tinggal " + sharedPreferences.getString(KEY_USERNAME,"None"), Toast.LENGTH_LONG).show();
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("LOGGED",false);
-                editor.putString(KEY_USERNAME,"DEFAULT");
+                editor.clear();
                 editor.apply();
-
-                Intent intent = new Intent(view.getContext(), MainActivity.class);
-                startActivity(intent);
-                getActivity().finish();
+                Intent i = new Intent(getContext(), MainActivity.class);
+                requireActivity().finish();
+                requireContext().startActivity(i);
             }
         });
         Hapus.setOnClickListener(new View.OnClickListener() {
